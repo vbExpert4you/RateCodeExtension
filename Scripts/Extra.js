@@ -42,27 +42,58 @@ function parseTable(table)
 	for(var i = 1; i < rowLength; i += 1)
 	{
 		
-	  var row = table.rows[i];
+		var row = table.rows[i];
 
-	  //onstructor (offerName, rateCode, bookDates, sailDates, itineraries, cabinCategories, combinability)
-	  console.log("cell", row.cells[OfferCol]);
-	  console.log("cell th", row.cells[OfferCol].th);
-	  console.log("cell innerHTML", row.cells[OfferCol].innerHTML);
-	  var offer = new Offer(row.cells[OfferCol].text, "", row.cells[BookDatesCol],
-							row.cells[SailDatesCol].html, row.cells[ItinerariesCol].html, 
-							row.cells[CabinCategoriesCol].html, row.cells[CombinabilityCol].html);
-	  console.log(offer);
-	  var cellLength = row.cells.length;
-	  for(var y = 0; y < cellLength; y += 1)
-	  {
-		var cell = row.cells[y];
+		var offerLink = row.cells[OfferCol].children[0];
 
-		//console.log("row " + i + ", cell " + y, cell);
+		// var offerName = "";
+		// var offerLinkHref = null;
+
+		// row.cells[OfferCol].children.forEach(function (item, index)
+		// {
+		// 		if (item.href != "")
+		// 		{
+		// 			offerLinkHref = item;
+		// 		}
+		// 		else if (offerName != "")
+		// 		{
+		// 			offerName = item.innerText;
+		// 		}
+		// });
+
+		// for (var i = 0; i < row.cells[OfferCol].children.length - 1; i++)
+		// {
+		// 	var item = row.cells[OfferCol].children[i];
+
+		// 	if (item.href != "")
+		// 	{
+		// 		offerLinkHref = item;
+		// 	}
+		// 	else if (offerName != "")
+		// 	{
+		// 		offerName = item.innerText;
+		// 	}
+		// }
+		// console.log("offer", row.cells[OfferCol].children);
+		// console.log("offerName", offerName);
+		// console.log("offerLinkHref", offerLinkHref);
+
+		var offer = new Offer(offerLink.innerText
+							, offerLink.href
+							, ""
+							, DateSpan.parseBookDates(row.cells[BookDatesCol].innerText)
+							, DateSpan.parseSailDates(row.cells[SailDatesCol].innerHTML)
+							, row.cells[ItinerariesCol].innerText
+							, row.cells[CabinCategoriesCol].innerText
+							, row.cells[CombinabilityCol].innerText);
 		
-		//do something with every cell here
-	  }
+		offers.push(offer);
+
 	}
+
+	console.log("Offers", offers);
 }
+
 
 ///	Find the table that has the information.
 ///	There may be multiple tables.

@@ -6,46 +6,52 @@ class DateSpan
 		this.startDate = startDate;
 		this.endDate = endDate;
 	}
+
+	static parseBookDates(bookDatesText)
+	{
+		if (bookDatesText.indexOf("-") > 0)
+		{
+			var dates = bookDatesText.split("-");
+			return new DateSpan(bookDatesText, new Date(dates[0]), new Date(dates[1]))
+		}
+		
+		return new DateSpan(bookDatesText, new Date(bookDatesText), new Date(bookDatesText));	
+	}
+
+	static parseSailDates(sailDatesText)
+	{
+		if (sailDatesText == "Select")
+		{
+			return new DateSpan(sailDatesText, new Date(), new Date());
+		}
+
+		if (sailDatesText.indexOf("Sailings thru") >= 0)
+		{
+			var startDate = new Date();
+			var endDate = new Date(sailDatesText.replace("Sailings thru", ""));
+
+			//	This gives us the first day of the month so calculate the last day of the month
+			var lastDayOfMonth = new Date(endDate.getFullYear(), endDate.getMonth() + 1, 0);
+
+			return new DateSpan(sailDatesText, startDate, lastDayOfMonth);
+		}
+
+		return new DateSpan(sailDatesText, new Date(), new Date());
+	}
 }
 
 class Offer
 {
-	constructor (offerName, rateCode, bookDates, sailDates, itineraries, cabinCategories, combinability)
+	constructor (offerName, offerLink, rateCode, bookDates, sailDates, itineraries, cabinCategories, combinability)
 	{
 		this.offerName = offerName;
+		this.offerLink = offerLink;
 		this.rateCode = rateCode;
-		this.bookDates = new DateSpan(bookDates, new Date, new Date);
-		this.sailDates = new DateSpan(sailDates, new Date, new Date);
+		this.bookDates = bookDates;
+		this.sailDates = sailDates;
 		this.cabinCategories = cabinCategories;
 		this.combinability = combinability;
 	}
 	
-	static getDates(dateRange)
-	{
-		if (dateRange != null && dateRange != "")
-		{
-			//var expr = /from \"(.*)\" to \"(.*)\"/g;
-			var yearFirstDateRegEx = /([12]\d{3}[-.](0[1-9]|1[0-2])[-.](0[1-9]|[12]\d|3[01]))/g;
-			var matches = yearFirstDateRegEx.exec(dateRange);
-			console.log(matches);
-			if (matches.length == 1)
-			{
-				return new DateSpan(dateRange, new Date, matches[1]);
-			}
-			if (matches.length == 2)
-			{
-				var start = new Date(matches[1]);
-				var end = new Date(matches[2]);
-				
-				if (start === null || end === null) 
-				{
-					return null;
-				}
-				return new DateSpan(dateRange, start, end);
-				
-			}
-			
-			return null;
-		}
-	}
+
 }
